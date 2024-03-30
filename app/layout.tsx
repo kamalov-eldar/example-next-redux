@@ -17,7 +17,6 @@ export default function RootLayout({ children }: Props) {
         <body>
           <section className={styles.container}>
             <Nav />
-
             <header className={styles.header}>
               <Image
                 src="/logo.svg"

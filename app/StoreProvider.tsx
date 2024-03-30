@@ -23,6 +23,7 @@ export const StoreProvider = ({ children }: Props) => {
       // configure listeners using the provided defaults
       // optional, but required for `refetchOnFocus`/`refetchOnReconnect` behaviors
       const unsubscribe = setupListeners(storeRef.current.dispatch);
+      console.log('unsubscribe: ', unsubscribe);
       return unsubscribe;
     }
   }, []);
