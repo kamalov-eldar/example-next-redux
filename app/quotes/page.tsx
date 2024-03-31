@@ -2,10 +2,9 @@
 
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { Quotes } from "../components/quotes/Quotes";
-import { selectAuthUser } from "@/lib/features/counter/counterSlice";
 
 export default function QuotesPage() {
-    const authUser = useAppSelector(selectAuthUser);
+    const authUser = useAppSelector((state) => state.auth.authUser);
 
     return (
         <>

@@ -1,6 +1,6 @@
 // Need to use the React-specific entry point to import `createApi`
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { AuthApiResponse, setAuthUser } from "../counter/counterSlice";
+import { AuthApiResponse } from "./authUserSlice";
 
 // Define a service using a base URL and expected endpoints
 export const authApiSlice = createApi({
@@ -23,7 +23,7 @@ export const authApiSlice = createApi({
                 body: loginData,
             }),
             async onQueryStarted(arg, { dispatch, getState, queryFulfilled, requestId, extra, getCacheEntry }) {
-               // dispatch(setAuthUser());
+                // dispatch(setAuthUser());
             },
         }),
         getAuthUser: build.query<AuthApiResponse, string>({
