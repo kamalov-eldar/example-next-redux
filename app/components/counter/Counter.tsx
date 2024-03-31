@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import {
     decrement,
@@ -9,36 +9,20 @@ import {
     incrementByAmount,
     incrementIfOdd,
     selectCount,
-    selectStatus,
-    selectAuthUser,
-    setAuthUser,
+    selectStatusCount,
 } from "@/lib/features/counter/counterSlice";
 
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import styles from "./Counter.module.css";
-import { useGetAuthUserQuery, useLoginByEmailMutation } from "@/lib/features/auth/authApiSlice";
-import { useMutationHandlers } from "@/lib/useMutationHandlers";
+import { loginUser, selectAuthUser } from "@/lib/features/auth/authUserSlice";
 
 export const Counter = () => {
     const dispatch = useAppDispatch();
     const count = useAppSelector(selectCount);
-    const loginData = { email: "dff@mail", password: "1234567" };
-    const [loginByEmail, loginByEmailResponse] = useLoginByEmailMutation();
-
-    /*   useMutationHandlers(loginByEmailResponse, (data) => {
-        dispatch(setAuthUser(data));
-    }); */
-
-    /*  const { data, isLoading } = useGetAuthUserQuery(loginByEmailResponse.data?.token || "");
-    console.log("data: ", data); */
-    const handleAuth = (loginData: { email: string; password: string }) => {
-        loginByEmail(loginData);
-    };
-
-    const status = useAppSelector(selectStatus);
+    const statusCount = useAppSelector(selectStatusCount);
     const [incrementAmount, setIncrementAmount] = useState("2");
-    const authUser = useAppSelector((state) => state.counter.authUser);
-    console.log("authUser: ", authUser);
+    const authUser = useAppSelector(selectAuthUser);
+
     const incrementValue = Number(incrementAmount) || 0;
 
     return (
@@ -50,12 +34,12 @@ export const Counter = () => {
                 <span aria-label="Count" className={styles.value}>
                     {count}
                 </span>
+
                 <button className={styles.button} aria-label="Increment value" onClick={() => dispatch(increment())}>
                     +
                 </button>
-
-                <p>{authUser ? authUser.email : "authUser"}</p>
             </div>
+            <span className={styles.row}>{authUser ? authUser.email : "authUser"}</span>
             <div className={styles.row}>
                 <input
                     className={styles.textbox}
@@ -71,15 +55,12 @@ export const Counter = () => {
                 </button>
                 <button
                     className={styles.asyncButton}
-                    disabled={status !== "idle"}
+                    disabled={statusCount !== "idle"}
                     onClick={() => dispatch(incrementAsync(incrementValue))}>
-                    Async Thunk
+                    Increment Async Thunk
                 </button>
-                <button
-                    className={styles.asyncButton}
-                    disabled={status !== "idle"}
-                    onClick={() => handleAuth({ email: "dff@mail", password: "1234567" })}>
-                    authApiSlice
+                <button className={styles.asyncButton} disabled={statusCount !== "idle"} onClick={() => dispatch(loginUser)}>
+                    loginUser Async Thunk
                 </button>
                 <button
                     className={styles.button}

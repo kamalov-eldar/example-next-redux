@@ -3,31 +3,14 @@ import type { AppThunk } from "@/lib/store";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { fetchCount } from "./counterAPI";
 
-export interface User {
-    id: string;
-    username: string;
-    email: string;
-    avatar?: {
-        url: string;
-        id_picture: string;
-    };
-}
-
-export interface AuthApiResponse {
-    data: User;
-    token: string;
-}
-
 export interface CounterSliceState {
     value: number;
     status: "idle" | "loading" | "failed";
-    authUser: User | null;
 }
 
 const initialState: CounterSliceState = {
     value: 0,
     status: "idle",
-    authUser: null,
 };
 
 // If you are not using async thunks you can use the standalone `createSlice`.
@@ -51,30 +34,24 @@ export const counterSlice = createAppSlice({
         incrementByAmount: create.reducer((state, action: PayloadAction<number>) => {
             state.value += action.payload;
         }),
-        setAuthUser: create.reducer((state, action: PayloadAction<AuthApiResponse>) => {
-            state.authUser = action.payload.data;
-            console.log("setAuthUser: ", action.payload.data);
-        }),
         // The function below is called a thunk and allows us to perform async logic. It
         // can be dispatched like a regular action: `dispatch(incrementAsync(10))`. This
         // will call the thunk with the `dispatch` function as the first argument. Async
         // code can then be executed and other actions can be dispatched. Thunks are
         // typically used to make async requests.
         incrementAsync: create.asyncThunk(
-            async (amount?: number) => {
+            async (amount: number) => {
                 const response = await fetchCount(amount);
-                console.log("fetchCount-response: ", response);
                 // The value we return becomes the `fulfilled` action payload
-                return response;
+                return response.data;
             },
             {
                 pending: (state) => {
                     state.status = "loading";
                 },
-                fulfilled: (state, action: PayloadAction<AuthApiResponse>) => {
+                fulfilled: (state, action) => {
                     state.status = "idle";
-                    // state.value += 11;
-                    state.authUser = action.payload.data;
+                    state.value += action.payload;
                 },
                 rejected: (state) => {
                     state.status = "failed";
@@ -86,16 +63,15 @@ export const counterSlice = createAppSlice({
     // state as their first argument.
     selectors: {
         selectCount: (counter) => counter.value,
-        selectStatus: (counter) => counter.status,
-        selectAuthUser: (state) => state.authUser,
+        selectStatusCount: (counter) => counter.status,
     },
 });
 
 // Action creators are generated for each case reducer function.
-export const { decrement, increment, incrementByAmount, incrementAsync, setAuthUser } = counterSlice.actions;
+export const { decrement, increment, incrementByAmount, incrementAsync } = counterSlice.actions;
 
 // Selectors returned by `slice.selectors` take the root state as their first argument.
-export const { selectCount, selectStatus, selectAuthUser } = counterSlice.selectors;
+export const { selectCount, selectStatusCount } = counterSlice.selectors;
 
 // We can also write thunks by hand, which may contain both sync and async logic.
 // Here's an example of conditionally dispatching actions based on current state.
