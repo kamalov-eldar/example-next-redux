@@ -59,7 +59,7 @@ export const Counter = () => {
                     onClick={() => dispatch(incrementAsync(incrementValue))}>
                     Increment Async Thunk
                 </button>
-                <button className={styles.asyncButton} disabled={statusCount !== "idle"} onClick={() => dispatch(loginUser)}>
+                <button className={styles.asyncButton} disabled={statusCount !== "idle"} onClick={() => dispatch(loginUser())}>
                     loginUser Async Thunk
                 </button>
                 <button
