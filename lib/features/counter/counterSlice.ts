@@ -51,15 +51,19 @@ export const counterSlice = createAppSlice({
         incrementByAmount: create.reducer((state, action: PayloadAction<number>) => {
             state.value += action.payload;
         }),
+        setAuthUser: create.reducer((state, action: PayloadAction<AuthApiResponse>) => {
+            state.authUser = action.payload.data;
+            console.log("setAuthUser: ", action.payload.data);
+        }),
         // The function below is called a thunk and allows us to perform async logic. It
         // can be dispatched like a regular action: `dispatch(incrementAsync(10))`. This
         // will call the thunk with the `dispatch` function as the first argument. Async
         // code can then be executed and other actions can be dispatched. Thunks are
         // typically used to make async requests.
         incrementAsync: create.asyncThunk(
-            async (amount: number) => {
+            async (amount?: number) => {
                 const response = await fetchCount(amount);
-                console.log("response: ", response);
+                console.log("fetchCount-response: ", response);
                 // The value we return becomes the `fulfilled` action payload
                 return response;
             },
@@ -68,10 +72,8 @@ export const counterSlice = createAppSlice({
                     state.status = "loading";
                 },
                 fulfilled: (state, action: PayloadAction<AuthApiResponse>) => {
-                    console.log("fulfilled: ", { payload: action.payload, type: action.type });
                     state.status = "idle";
-                    state.value += 11;
-                    console.log("action.payload: ", action.payload);
+                    // state.value += 11;
                     state.authUser = action.payload.data;
                 },
                 rejected: (state) => {
@@ -90,7 +92,7 @@ export const counterSlice = createAppSlice({
 });
 
 // Action creators are generated for each case reducer function.
-export const { decrement, increment, incrementByAmount, incrementAsync } = counterSlice.actions;
+export const { decrement, increment, incrementByAmount, incrementAsync, setAuthUser } = counterSlice.actions;
 
 // Selectors returned by `slice.selectors` take the root state as their first argument.
 export const { selectCount, selectStatus, selectAuthUser } = counterSlice.selectors;

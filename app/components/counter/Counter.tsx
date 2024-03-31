@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import {
     decrement,
@@ -11,14 +11,29 @@ import {
     selectCount,
     selectStatus,
     selectAuthUser,
+    setAuthUser,
 } from "@/lib/features/counter/counterSlice";
 
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import styles from "./Counter.module.css";
+import { useGetAuthUserQuery, useLoginByEmailMutation } from "@/lib/features/auth/authApiSlice";
+import { useMutationHandlers } from "@/lib/useMutationHandlers";
 
 export const Counter = () => {
     const dispatch = useAppDispatch();
     const count = useAppSelector(selectCount);
+    const loginData = { email: "dff@mail", password: "1234567" };
+    const [loginByEmail, loginByEmailResponse] = useLoginByEmailMutation();
+
+    /*   useMutationHandlers(loginByEmailResponse, (data) => {
+        dispatch(setAuthUser(data));
+    }); */
+
+    /*  const { data, isLoading } = useGetAuthUserQuery(loginByEmailResponse.data?.token || "");
+    console.log("data: ", data); */
+    const handleAuth = (loginData: { email: string; password: string }) => {
+        loginByEmail(loginData);
+    };
 
     const status = useAppSelector(selectStatus);
     const [incrementAmount, setIncrementAmount] = useState("2");
@@ -58,7 +73,13 @@ export const Counter = () => {
                     className={styles.asyncButton}
                     disabled={status !== "idle"}
                     onClick={() => dispatch(incrementAsync(incrementValue))}>
-                    Add Async
+                    Async Thunk
+                </button>
+                <button
+                    className={styles.asyncButton}
+                    disabled={status !== "idle"}
+                    onClick={() => handleAuth({ email: "dff@mail", password: "1234567" })}>
+                    authApiSlice
                 </button>
                 <button
                     className={styles.button}

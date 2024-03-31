@@ -1,13 +1,22 @@
 import { useGetQuotesQuery } from "@/lib/features/quotes/quotesApiSlice";
 import { useState } from "react";
 import styles from "./Quotes.module.css";
+import { useLoginByEmailMutation } from "@/lib/features/auth/authApiSlice";
+import { useAppDispatch, useAppSelector } from "@/lib/hooks";
+import { incrementAsync, selectAuthUser, selectStatus } from "@/lib/features/counter/counterSlice";
 
 const options = [5, 10, 20, 30];
 
 export const Quotes = () => {
+    const dispatch = useAppDispatch();
+
     const [numberOfQuotes, setNumberOfQuotes] = useState(10);
     // Using a query hook automatically fetches data and returns query values
     const { data, isError, isLoading, isSuccess } = useGetQuotesQuery(numberOfQuotes);
+
+    const [loginByEmail, loginByEmailResponse] = useLoginByEmailMutation();
+    const authUser = useAppSelector(selectAuthUser);
+    const status = useAppSelector(selectStatus);
 
     if (isError) {
         return (
@@ -28,8 +37,12 @@ export const Quotes = () => {
     if (isSuccess) {
         return (
             <div className={styles.container}>
-                <h3>Select the Quantity of Quotes to Fetch:</h3>
-
+                <h3>Select the Quantity of Quotes to Fetch: - Quotes Component</h3>
+                {/*    {loginByEmailResponse.data && loginByEmailResponse.data.token} */}
+                {authUser ? authUser.email : "authUser"}
+                <button className={styles.asyncButton} disabled={status !== "idle"} onClick={() => dispatch(incrementAsync())}>
+                    Async Thunk
+                </button>
                 <select
                     className={styles.select}
                     value={numberOfQuotes}
@@ -42,11 +55,12 @@ export const Quotes = () => {
                         </option>
                     ))}
                 </select>
-                {data.quotes.map(({ author, quote, id }) => (
+                {data.quotes.map(({ author, quote, id }, idx) => (
                     <blockquote key={id}>
-                        &ldquo;{quote}&rdquo;
+                        {idx}
+                        quote: &ldquo;{quote}&rdquo;
                         <footer>
-                            <cite>{author}</cite>
+                            author: <cite>{author}</cite>
                         </footer>
                     </blockquote>
                 ))}

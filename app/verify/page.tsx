@@ -3,7 +3,7 @@ import { useAppSelector } from "@/lib/hooks";
 
 export default function VerifyPage() {
     const authUser = useAppSelector((state) => state.counter.authUser);
-    console.log("authUser: ", authUser);
+    console.log("VerifyPage-authUser: ", authUser);
 
     return (
         <>

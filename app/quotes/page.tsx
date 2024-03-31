@@ -11,7 +11,7 @@ export default function QuotesPage() {
         <>
             <h1>Quotes page</h1>
             <p>This page is intended to showcase RTK Query.</p>
-            {authUser}
+            {authUser ? authUser.email : "authUser"}
             <Quotes />
         </>
     );
